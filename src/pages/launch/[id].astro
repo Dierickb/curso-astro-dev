@@ -1,0 +1,38 @@
+---
+import { getLaunchById } from "../../services/spacex"
+import Layout from "../../layouts/Layout.astro";
+import LaunchId from "../../components/LaunchId.astro";
+
+const { id } = Astro.params
+
+let launch // Redirigir página a 404 error
+if(!id) {
+    Astro.redirect("/error404")
+    return
+}
+launch = await getLaunchById({ id })
+
+export const prerender = false // Server Side Render
+
+/*
+Static Path
+export const getStaticPaths = (async () => {
+    // llamar a auna API externa
+    // Para saber todas las IDs que debes generar
+
+    const launches = await getLatestLaunches()
+    return launches.map(launch => ({
+        params: { id: launch.id }
+    }))
+
+}) satisfies GetStaticPaths;
+ */
+---
+
+<Layout title=`Lanzamiento ${id}`>
+    <LaunchId success={launch.success} flightNumber={launch.flight_number} 
+            img={launch.links.patch.small} id={launch.id} details={launch.details} 
+        >
+    </LaunchId>
+</Layout>
+
